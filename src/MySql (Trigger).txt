@@ -1,0 +1,57 @@
+ =================== Add data after delete data=====================
+
+CREATE TRIGGER `AddDeleteData` 
+AFTER DELETE ON `emp_add`
+ FOR EACH ROW 
+INSERT into emp_delete_after_insert (dname,dage,dskills,ddesignation,daddress,emp_id) 
+VALUES(old.aname, old.aage, old.askills, old.adesignation, old.aaddress, old.id)
+
+================== Add data after Update data=====================
+
+CREATE TRIGGER `AddUpdateData` 
+AFTER UPDATE ON `emp_add`
+ FOR EACH ROW 
+
+IF (select count(*) from emp_update_after_insert WHERE add_id = new.id)=1
+THEN
+    UPDATE emp_update_after_insert SET 
+    uname = new.aname, 
+    uskills = new.askills,
+    udesignation = new.adesignation,
+    uaddress = new.aaddress,
+    uage = new.aage
+    WHERE add_id = new.id;
+ELSE
+    INSERT into emp_update_after_insert (uname, uage, uskills, udesignation, uaddress, add_id) 
+VALUES(new.aname, new.aage, new.askills, new.adesignation, new.aaddress, new.id);	
+
+END IF
+================== Add data another table=====================
+
+CREATE TRIGGER `Add_data` 
+AFTER INSERT ON `emp`
+ FOR EACH ROW BEGIN
+
+INSERT into emp_add (aname, aage, askills, adesignation, aaddress, emp_id) 
+VALUES(new.name, new.age, new.skills, new.designation, new.address, new.id);
+
+END
+================== Delete data another table=====================
+
+CREATE TRIGGER `DeleteUpdateData` 
+BEFORE DELETE ON `emp_add`
+ FOR EACH ROW 
+DELETE FROM emp_update_after_insert WHERE add_id = old.id
+
+================== Update data another table=====================
+CREATE TRIGGER `Update_data` 
+AFTER UPDATE ON `emp`
+ FOR EACH ROW BEGIN
+UPDATE emp_add SET 
+    aname = new.name, 
+    askills = new.skills,
+    adesignation = new.designation,
+    aaddress = new.address,
+    aage = new.age
+    WHERE emp_id = new.id;
+END

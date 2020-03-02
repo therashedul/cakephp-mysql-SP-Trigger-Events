@@ -1,0 +1,97 @@
+========== Data insert
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `add_data`(IN `p_name` VARCHAR(200), IN `p_skills` VARCHAR(200), IN `p_address` VARCHAR(200))
+    NO SQL
+    DETERMINISTIC
+BEGIN
+/*
+**************************************************
+Created By    : Rashed
+Date        : 25-Feb-2020
+Purpose        : Data insert 
+**************************************************
+*/
+
+INSERT INTO employees (name, skills, address) VALUES (p_name,p_skills,p_address);
+
+END$$
+DELIMITER ;
+
+============================= Edit code
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `edit_data`(IN `p_id` INT(10))
+    NO SQL
+BEGIN
+/*
+**************************************************
+Created By    : Rashed
+Date        : 25-Feb-2020
+Purpose        : Data Edit
+**************************************************
+*/
+
+SELECT * FROM employees WHERE id=p_id;
+
+END$$
+DELIMITER ;
+
+========================== Update code
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `update_data`(IN `p_id` INT(10), IN `p_name` VARCHAR(100), IN `p_skills` VARCHAR(100), IN `p_address` VARCHAR(100))
+BEGIN
+/*
+**************************************************
+Created By    : Rashed
+Date        : 25-Feb-2020
+Purpose        : Data Update
+**************************************************
+*/
+SET @up_date = NOW()+6; // assaign dhaka time
+UPDATE employees SET 
+name = p_name,
+skills = p_skills,
+address = p_address,
+modified = @up_date
+
+where id = p_id;
+END$$
+DELIMITER ;
+
+================== View code
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `view_data`(IN `p_id` INT(10), OUT `p_name` VARCHAR(100), OUT `p_skills` VARCHAR(100), OUT `p_address` VARCHAR(100))
+    NO SQL
+BEGIN
+/*
+**************************************************
+Created By    : Rashed
+Date        : 25-Feb-2020
+Purpose        : Data View
+**************************************************
+*/
+  SELECT  name, skills, address INTO p_name, p_skills, p_address  
+   FROM employees WHERE id = p_id;
+ END$$
+DELIMITER ;
+
+===================== Delete code
+
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `delete_data`(IN `p_id` INT(10))
+BEGIN
+/*
+**************************************************
+Created By    : Rashed
+Date        : 25-Feb-2020
+Purpose        : Data Delete 
+**************************************************
+*/
+DELETE FROM employees WHERE id=p_id;
+
+END$$
+DELIMITER ;
+====================================== End Stored Procedure  =====================
