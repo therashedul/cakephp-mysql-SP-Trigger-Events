@@ -1,0 +1,88 @@
+======================= Data insert===============================
+
+CREATE DEFINER=`root`@`localhost` 
+EVENT `AddData` 
+ON SCHEDULE EVERY 1 MINUTE 
+STARTS '2020-02-10 15:00:00' 
+ENDS '2023-06-07 23:00:00' 
+ON COMPLETION NOT PRESERVE ENABLE COMMENT 'AddData' DO 
+INSERT INTO emp_event_insert (uname, uage, uskills, uaddress, udesignation, emp_id)
+    SELECT name, age, skills, address, designation, id  FROM emp
+        WHERE NOT EXISTS (SELECT uname, uage, uskills, uaddress, udesignation, emp_id
+                          FROM emp_event_insert  WHERE emp.id = emp_event_insert.emp_id)
+
+
+=======================Another table data insert===============================
+
+CREATE DEFINER=`root`@`localhost` 
+EVENT `AnotherTabledataInsert` 
+ON SCHEDULE EVERY 1 MINUTE 
+STARTS '2020-02-12 23:00:00' 
+ENDS '2021-06-17 23:00:00' 
+ON COMPLETION NOT PRESERVE ENABLE COMMENT 'another database another table data insert' DO 
+INSERT INTO testapi.mytable SELECT * FROM testapi.emp
+
+===================== Another database table create and same data insert=============
+
+CREATE DEFINER=`root`@`localhost` 
+EVENT `Another_database_table_create_and_data_insert` 
+ON SCHEDULE EVERY 1 MINUTE 
+STARTS '2020-02-12 23:00:00' 
+ENDS '2022-05-26 00:00:00' 
+ON COMPLETION NOT PRESERVE DISABLE COMMENT 'Another Table Data Insert' DO 
+BEGIN
+	CREATE TABLE apilearning.mytable_new LIKE testapi.mytable;
+	INSERT INTO apilearning.mytable_new SELECT * FROM testapi.mytable;
+	RENAME TABLE testapi.mytable TO testapi.mytable_old;
+	TRUNCATE testapi.mytable_old;
+END
+===================== Another database table create =============
+
+CREATE DEFINER=`root`@`localhost` 
+EVENT `CreateNewDatabase` 
+ON SCHEDULE EVERY 1 MINUTE 
+STARTS '2020-02-12 23:00:00' 
+ENDS '2021-10-22 23:00:00' 
+ON COMPLETION NOT PRESERVE DISABLE COMMENT 'Create new another database' DO 
+CREATE TABLE testapi.mytable1 LIKE testapi.emp
+
+===================== Date update or insert =============
+
+CREATE DEFINER=`root`@`localhost` 
+EVENT `UpdateData` 
+ON SCHEDULE EVERY 1 MINUTE 
+STARTS '2020-02-10 14:56:00' 
+ENDS '2021-02-17 23:00:00' 
+ON COMPLETION NOT PRESERVE ENABLE COMMENT 'Upadate data' DO 
+UPDATE emp_event_insert 
+SET 
+emp_event_insert.uname  = ( SELECT emp.name  FROM emp WHERE emp.id = emp_event_insert.emp_id),
+emp_event_insert.uage  = ( SELECT emp.age  FROM emp WHERE emp.id = emp_event_insert.emp_id),
+emp_event_insert.uskills  = ( SELECT emp.skills  FROM emp WHERE emp.id = emp_event_insert.emp_id),
+emp_event_insert.uaddress  = ( SELECT emp.address  FROM emp WHERE emp.id = emp_event_insert.emp_id),
+emp_event_insert.udesignation  = ( SELECT emp.designation  FROM emp WHERE emp.id = emp_event_insert.emp_id)
+
+
+===================== Date insert from delete table =============
+
+CREATE DEFINER=`root`@`localhost` 
+EVENT `data_insert_from_delete_table` 
+ON SCHEDULE EVERY 1 MINUTE 
+STARTS '2020-02-12 23:00:00' 
+ENDS '2020-11-19 23:00:00' 
+ON COMPLETION NOT PRESERVE ENABLE COMMENT 'data insert from delete table' DO 
+INSERT INTO emp (name, age, skills, address, designation, dlt_id)
+    SELECT dname, dage, dskills, daddress, ddesignation, emp_id  FROM emp_delete_after_insert    
+    WHERE NOT EXISTS (SELECT name, age, skills, address, designation, dlt_id
+                   FROM emp WHERE emp.dlt_id = emp_delete_after_insert.emp_id)
+
+===================== Delete data from table =============
+
+CREATE DEFINER=`root`@`localhost` 
+EVENT `DeleteDataFromTable` 
+ON SCHEDULE EVERY 3 MINUTE 
+STARTS '2020-02-10 12:15:00' 
+ENDS '2020-09-24 00:00:00' 
+ON COMPLETION NOT PRESERVE DISABLE COMMENT 'Delete Table' DO 
+DELETE FROM emp
+
