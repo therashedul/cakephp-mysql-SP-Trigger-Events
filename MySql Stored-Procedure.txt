@@ -63,7 +63,7 @@ DELIMITER ;
 ================== View code
 
 DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `view_data`(IN `p_id` INT(10), OUT `p_name` VARCHAR(100), OUT `p_skills` VARCHAR(100), OUT `p_address` VARCHAR(100))
+CREATE DEFINER=`root`@`localhost` PROCEDURE `view_data`(IN `p_id` INT(10))
     NO SQL
 BEGIN
 /*
@@ -73,7 +73,7 @@ Date        : 25-Feb-2020
 Purpose        : Data View
 **************************************************
 */
-  SELECT  name, skills, address INTO p_name, p_skills, p_address  
+  SELECT  *
    FROM employees WHERE id = p_id;
  END$$
 DELIMITER ;
